@@ -1,19 +1,41 @@
-import Link from "next/link";
 import Image from "next/image";
+import type {Metadata} from "next";
+import Link from "next/link";
+
 
 type Props = {
-    params: {
-        id: string;
-    };
-};
-
-async function fetchCharacter(id: string) {
-    const res = await fetch(`https://rickandmortyapi.com/api/character/${id}`, { cache: "no-store" });
-    return res.json();
+    params: Promise<{
+        id: string
+    }>
 }
 
-export default async function CharacterPage({ params: { id } }: Props) {
-    const character = await fetchCharacter(id);
+async function getData(id: string) {
+    const response = await fetch(`https://rickandmortyapi.com/api/character/${id}`, {
+        cache: "no-store",
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch character data");
+    }
+
+    return response.json();
+}
+
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+    const {id} = await params;
+    const character = await getData(id);
+
+    return {
+        title: character.name,
+    }
+
+
+}
+
+
+export default async function CharacterPage({params}: Props) {
+    const {id} = await params
+    const character = await getData(id);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-100">
@@ -40,4 +62,3 @@ export default async function CharacterPage({ params: { id } }: Props) {
         </div>
     );
 }
-
