@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+const nextConfig = {
+    images: {
+        domains: ['rickandmortyapi.com'],
+    },
+
+} satisfies NextConfig;
 
 export default nextConfig;
